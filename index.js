@@ -8,10 +8,10 @@ const ctx = canvas.getContext("2d");
 
 ctx.width = window.innerWidth;
 ctx.height = 400;
-
+ctx.lineWidth = 2;
 let currentLayer = 0;
 
-let layers = [{ "0-0": [0, 0] }];
+let layers = [{ "0-0": [0, 0] }, {}];
 
 tileSetImg.src =
   "https://assets.codepen.io/21542/TileEditorSpritesheet.2x_2.png";
@@ -67,19 +67,46 @@ canvas.addEventListener("mousedown", () => (isMouseDown = true));
 canvas.addEventListener("mouseup", () => (isMouseDown = false));
 canvas.addEventListener("mouseleave", () => (isMouseDown = false));
 
+// window.addEventListener("resize", () => {
+//   canvas.width = window.innerWidth;
+//   draw();
+// });
+
+let prevHover = "";
 canvas.addEventListener("mousedown", addTile);
 canvas.addEventListener("mousemove", (e) => {
+  layers[1] = {};
+
   if (isMouseDown) {
+    currentLayer = 0;
+
     addTile(e);
   }
+  // currentLayer = 1;
+  // addTile(e);
+
+  hover(e);
 });
+
+function hover(e) {
+  const hover = getCoords(e);
+  const x = hover[0];
+  const y = hover[1];
+  draw();
+  ctx.strokeRect(x * 32, y * 32, 32, 32);
+}
 
 function addTile(e) {
   var clicked = getCoords(e);
   var key = clicked[0] + "-" + clicked[1];
+  prevHover = key;
+
   if (e.shiftKey) {
+    delete layers[currentLayer][key];
   } else {
-    layers[currentLayer][key] = [selection[0], selection[1]];
+    if (!layers[currentLayer][key]) {
+      layers[currentLayer][key] = [selection[0], selection[1]];
+    }
   }
 
   draw();
