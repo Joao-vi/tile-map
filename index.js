@@ -40,25 +40,28 @@ const tileSize = 32;
 
 let layers = [
   [Math.floor(canvas.width / 32), Math.floor(canvas.height / 32)],
-  [{}],
+  [
+    {
+      x: 0,
+      y: 0,
+      color: "red",
+    },
+  ],
 ];
 
-// tileSetImg.src =
-//   "https://assets.codepen.io/21542/TileEditorSpritesheet.2x_2.png";
-
-// tileSetImg.onload = () => {
-//   draw();
-// };
-
-// const panzoom = Panzoom(canvas, {
-//   maxScale: 1,
-// });
-// panzoom.pan(10, 10);
-// panzoom.zoom(2, { animate: true });
+let x = 0,
+  y = 0;
+const panzoom = Panzoom(canvas, {
+  setTransform: (canvas, { scale, x, y }) => {
+    console.log("X: ", x, " Y: ", y);
+    x = x;
+    panzoom.setStyle("transform", `translate(${x}px, ${y}px)`);
+  },
+});
 
 function generateBackground() {
-  for (let i = 0; i < canvas.width / tileSize; i++) {
-    for (let j = 0; j < canvas.width / tileSize; j++) {
+  for (let i = 0; i < 100; i++) {
+    for (let j = 0; j < 100; j++) {
       ctx.fillStyle = "#cccccc";
       ctx.fillRect(
         i * tileSize,
@@ -73,12 +76,13 @@ function generateBackground() {
 function paintTile(props) {
   const { x = 0, px = 0, y = 0, py = 0, wx = padding, hy = padding } = props;
   ctx.beginPath();
-  return ctx.fillRect(
+  ctx.fillRect(
     x * tileSize - px,
     y * tileSize - py,
     tileSize - wx,
     tileSize - hy
   );
+  ctx.closePath();
 }
 
 function generateTiles(layer) {
