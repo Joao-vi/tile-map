@@ -56,10 +56,12 @@
       opacity: 0.7;
       transition: all 300ms ease;
     }
-
+    .panzoom {
+      cursor: default;
+    }
     .canvas-container {
       width: 100%;
-      height: 500px;
+      height: 400px;
       overflow: hidden;
       background-color: #9d9494;
     }
@@ -83,9 +85,16 @@
       </label>
     </ul>
     <div class="canvas-container">
-      <canvas id="main-tile" width="800" height="400"></canvas>
+      <div class="panzoom" style="pointer-events: none !important">
+        <canvas
+          id="main-tile"
+          width="800"
+          height="400"
+          style="pointer-events: all !important"
+        ></canvas>
+      </div>
     </div>
   </body>
-  <!-- <script src="https://unpkg.com/@panzoom/panzoom@4.5.0/dist/panzoom.min.js"></script> -->
+  <script src="https://unpkg.com/@panzoom/panzoom@4.5.0/dist/panzoom.min.js"></script>
   <script src="./index.js"></script>
 </html>
