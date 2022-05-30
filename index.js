@@ -4,6 +4,7 @@ const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const colors = document.querySelectorAll("input");
 const formColor = document.querySelector("ul");
+const el = document.querySelector("#ele");
 
 colors[0].checked = true;
 let selectedColor = colors[0].id;
@@ -27,8 +28,8 @@ function handleSetColor(e) {
 handleSetColor();
 let selection = [0, 0];
 
-canvas.width = window.innerWidth - 40;
-ctx.height = 400;
+canvas.width = 1000 - 40;
+canvas.height = 1000;
 ctx.lineJoin = "round";
 ctx.lineWidth = 4;
 ctx.strokeStyle = "#16db65";
@@ -41,27 +42,27 @@ const tileSize = 32;
 let layers = [
   [Math.floor(canvas.width / 32), Math.floor(canvas.height / 32)],
   [
-    {
-      x: 0,
-      y: 0,
-      color: "red",
-    },
+    // {
+    //   x: 1,
+    //   y: 1,
+    //   color: "red",
+    // },
   ],
 ];
 
-let x = 0,
-  y = 0;
-const panzoom = Panzoom(canvas, {
-  setTransform: (canvas, { scale, x, y }) => {
-    console.log("X: ", x, " Y: ", y);
-    x = x;
-    panzoom.setStyle("transform", `translate(${x}px, ${y}px)`);
-  },
-});
+// let x = 0,
+//   y = 0;
+// const panzoom = Panzoom(canvas, {
+//   setTransform: (canvas, { scale, x, y }) => {
+//     console.log("X: ", x, " Y: ", y);
+//     x = x;
+//     panzoom.setStyle("transform", `translate(${x}px, ${y}px)`);
+//   },
+// });
 
 function generateBackground() {
-  for (let i = 0; i < 100; i++) {
-    for (let j = 0; j < 100; j++) {
+  for (let i = 1; i <= canvas.width / 32; i++) {
+    for (let j = 1; j <= canvas.width / 32; j++) {
       ctx.fillStyle = "#cccccc";
       ctx.fillRect(
         i * tileSize,
@@ -138,10 +139,10 @@ canvas.addEventListener("mousedown", () => (isMouseDown = true));
 canvas.addEventListener("mouseup", () => (isMouseDown = false));
 canvas.addEventListener("mouseleave", () => (isMouseDown = false));
 
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth - 40;
-  draw();
-});
+// window.addEventListener("resize", () => {
+//   canvas.width = window.innerWidth - 40;
+//   draw();
+// });
 
 canvas.addEventListener("mousedown", addTile);
 canvas.addEventListener("mousemove", (e) => {
