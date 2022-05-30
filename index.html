@@ -25,30 +25,54 @@
       gap: 1rem;
     }
 
-    .tileset-container {
-      width: max-content;
-    }
-
-    .tile-selecting {
-      pointer-events: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 32px;
-      height: 32px;
-      border: 3px solid green;
-    }
-
     canvas {
       background-color: #9d9494;
       width: min-content;
     }
+
+    ul,
+    li {
+      all: none;
+    }
+
+    ul {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input {
+      display: none;
+    }
+
+    label {
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 5px;
+
+      opacity: 0.7;
+      transition: all 300ms ease;
+    }
   </style>
   <body>
-    <div class="tileset-container">
-      <img id="tileset-img" />
-      <div class="tile-selecting"></div>
-    </div>
+    <ul class="colors-container">
+      <label for="#264653" style="background-color: #264653">
+        <input type="radio" id="#264653" name="pallet" />
+      </label>
+      <label for="#2a9d8f" style="background-color: #2a9d8f">
+        <input type="radio" id="#2a9d8f" name="pallet" />
+      </label>
+      <label for="#e9c46a" style="background-color: #e9c46a">
+        <input type="radio" id="#e9c46a" name="pallet" />
+      </label>
+      <label for="#f4a261" style="background-color: #f4a261">
+        <input type="radio" id="#f4a261" name="pallet" />
+      </label>
+      <label for="#e76f51" style="background-color: #e76f51">
+        <input type="radio" id="#e76f51" name="pallet" />
+      </label>
+    </ul>
     <canvas id="main-tile" width="800" height="400"></canvas>
   </body>
   <script src="./index.js"></script>

@@ -1,18 +1,38 @@
 const pan = window.Panzoom;
 
-console.log(pan);
 const canvas = document.querySelector("canvas");
-const tileSetContainer = document.querySelector(".tileset-container");
-const tileSetImg = document.querySelector("#tileset-img");
-const tileSetSelection = document.querySelector(".tile-selecting");
 const ctx = canvas.getContext("2d");
+const colors = document.querySelectorAll("input");
+const formColor = document.querySelector("ul");
 
+colors[0].checked = true;
+let selectedColor = colors[0].id;
+
+formColor.addEventListener("click", handleSetColor);
+
+function handleSetColor(e) {
+  e?.stopPropagation();
+  colors.forEach((color) => {
+    if (color.checked) {
+      selectedColor = color.id;
+      color.parentElement.style.opacity = 1;
+      color.parentElement.style.border = "2px solid #eeee";
+    } else {
+      color.parentElement.style.opacity = 0.5;
+      color.parentElement.style.border = "none";
+    }
+  });
+}
+
+handleSetColor();
 let selection = [0, 0];
 
 canvas.width = window.innerWidth - 40;
 ctx.height = 400;
-ctx.lineWidth = 2;
 ctx.lineJoin = "round";
+ctx.lineWidth = 4;
+ctx.strokeStyle = "#16db65";
+
 let currentLayer = 0;
 
 const padding = 2;
@@ -23,12 +43,12 @@ let layers = [
   [{}],
 ];
 
-tileSetImg.src =
-  "https://assets.codepen.io/21542/TileEditorSpritesheet.2x_2.png";
+// tileSetImg.src =
+//   "https://assets.codepen.io/21542/TileEditorSpritesheet.2x_2.png";
 
-tileSetImg.onload = () => {
-  draw();
-};
+// tileSetImg.onload = () => {
+//   draw();
+// };
 
 // const panzoom = Panzoom(canvas, {
 //   maxScale: 1,
@@ -52,6 +72,7 @@ function generateBackground() {
 
 function paintTile(props) {
   const { x = 0, px = 0, y = 0, py = 0, wx = padding, hy = padding } = props;
+  ctx.beginPath();
   return ctx.fillRect(
     x * tileSize - px,
     y * tileSize - py,
@@ -101,14 +122,14 @@ function getCoords(e) {
   return [Math.floor(mouseX / tileSize), Math.floor(mouseY / tileSize)];
 }
 
-tileSetContainer.addEventListener("mousedown", (e) => {
-  selection = getCoords(e);
-  tileSetSelection.style.left = selection[0] * tileSize + "px";
-  tileSetSelection.style.top = selection[1] * tileSize + "px";
-});
-
 let isMouseDown = false;
 
+window.addEventListener("keydown", (e) => {
+  if (e.shiftKey) ctx.strokeStyle = "#ef233c";
+});
+window.addEventListener("keyup", (e) => {
+  if (!e.shiftKey) ctx.strokeStyle = "#16db65";
+});
 canvas.addEventListener("mousedown", () => (isMouseDown = true));
 canvas.addEventListener("mouseup", () => (isMouseDown = false));
 canvas.addEventListener("mouseleave", () => (isMouseDown = false));
@@ -134,20 +155,13 @@ function hover(e) {
   const x = hover[0];
   const y = hover[1];
   draw();
-  ctx.strokeStyle = "#414040";
+
   ctx.fillStyle = "rgba(226, 224, 224, 0.2)";
-  ctx.strokeRect(
-    x * tileSize,
-    y * tileSize,
-    tileSize - padding,
-    tileSize - padding
-  );
-  ctx.fillRect(
-    x * tileSize + padding,
-    y * tileSize + padding,
-    tileSize - 2 * padding,
-    tileSize - 2 * padding
-  );
+  ctx.beginPath();
+  ctx.rect(x * tileSize, y * tileSize, tileSize - padding, tileSize - padding);
+  ctx.stroke();
+  ctx.fill();
+  ctx.closePath();
 }
 
 function addTile(e) {
@@ -158,7 +172,7 @@ function addTile(e) {
     index !== -1 && layers[1]?.splice(index, 1);
   } else {
     if (!layers[1].some((tile) => tile.x === x && tile.y === y)) {
-      layers[1].push({ x, y, color: "green" });
+      layers[1].push({ x, y, color: selectedColor });
     }
   }
 
