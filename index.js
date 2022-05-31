@@ -233,13 +233,13 @@ function addTile(e) {
     const [x, y] = coord;
 
     if (e.shiftKey) {
-      const index = layers[1]?.findIndex(
+      const index = layers[2]?.findIndex(
         (tile) => tile.x === x && tile.y === y
       );
-      index !== -1 && layers[1]?.splice(index, 1);
+      index !== -1 && layers[2]?.splice(index, 1);
     } else {
-      if (!layers[1].some((tile) => tile.x === x && tile.y === y)) {
-        layers[1].push({ x, y, color: selectedColor });
+      if (!layers[2].some((tile) => tile.x === x && tile.y === y)) {
+        layers[2].push({ x, y, color: selectedColor });
       }
     }
     draw();
