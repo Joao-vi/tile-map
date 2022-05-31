@@ -37,9 +37,51 @@ let currentLayer = 0;
 
 const padding = 2;
 const tileSize = 32;
+let isMouseDown = false;
+
+var instance = panzoom(panzoomEl, {
+  zoomDoubleClickSpeed: 1,
+  smoothScroll: false,
+  maxZoom: 1,
+  minZoom: 1,
+  beforeWheel: function (e) {
+    // allow wheel-zoom only if altKey is down. Otherwise - ignore
+    var shouldIgnore = true;
+    return shouldIgnore;
+  },
+  beforeMouseDown: function (e) {
+    // allow wheel-zoom only if altKey is down. Otherwise - ignore
+    var shouldIgnore = !e.ctrlKey;
+    return shouldIgnore;
+  },
+  filterKey: function (/* e, dx, dy, dz */) {
+    // don't let panzoom handle this event:
+    return true;
+  },
+});
+
+const offSetCanvas = 1024 - window.innerWidth + 32;
+const maxPanX = offSetCanvas < 0 ? 0 : offSetCanvas * -1;
+
+instance.on("pan", function (e) {
+  const { x, y } = e.getTransform();
+  if (x < maxPanX) {
+    e.moveTo(maxPanX, y);
+  } else if (x > 5) {
+    e.moveTo(5, y);
+  }
+
+  if (y < -555) {
+    e.moveTo(x, -555);
+  } else if (y > 5) {
+    e.moveTo(x, 5);
+  }
+});
 
 let layers = [
-  [Math.floor(canvas.width / 32), Math.floor(canvas.height / 32)],
+  // bg-layer
+  [],
+  // blockchain layer
   [
     {
       x: 1,
@@ -52,14 +94,9 @@ let layers = [
       color: "red",
     },
   ],
+  // Selected user layer
+  [],
 ];
-var panzoom = Panzoom(panzoomEl, {
-  cursor: "default",
-  noBind: true,
-  setTransform: (canvas, { scale, x, y, noBind }) => {
-    panzoom.setStyle("transform", `translate(${x}px, ${y}px)`);
-  },
-});
 
 function generateBackground() {
   for (let i = 1; i <= 33; i++) {
@@ -122,6 +159,7 @@ function draw() {
     }
   });
 }
+
 draw();
 
 function getCoords(e) {
@@ -136,33 +174,28 @@ function getCoords(e) {
     : [xCoord, yCoord];
 }
 
-let isMouseDown = false;
-
 window.addEventListener("keydown", (e) => {
   if (e.shiftKey) ctx.strokeStyle = "#ef233c";
-  if (e.ctrlKey) {
-    panzoom.bind();
-    panzoomEl.style.cursor = "grab";
-  }
+
+  if (e.ctrlKey) canvas.style.cursor = "grab";
 });
 window.addEventListener("keyup", (e) => {
   if (!e.shiftKey) ctx.strokeStyle = "#16db65";
-  if (!e.ctrlKey) {
-    panzoom.destroy();
-    panzoomEl.style.cursor = "default";
-  }
+  if (!e.ctrlKey) canvas.style.cursor = "default";
 });
 
 canvas.addEventListener("mousedown", (e) => {
-  isMouseDown = true;
+  if (!e.ctrlKey) {
+    addTile(e);
+    isMouseDown = true;
+  }
+  if (e.ctrlKey) canvas.style.cursor = "grabbing";
 });
-canvas.addEventListener("mouseup", () => {
+canvas.addEventListener("mouseup", (e) => {
   isMouseDown = false;
+  if (e.ctrlKey) canvas.style.cursor = "grab";
 });
 canvas.addEventListener("mouseleave", () => (isMouseDown = false));
-
-canvas.addEventListener("mousedown", addTile);
-
 canvas.addEventListener("mousemove", (e) => {
   if (isMouseDown) {
     currentLayer = 0;
@@ -176,7 +209,6 @@ canvas.addEventListener("mousemove", (e) => {
 function hover(e) {
   const coord = getCoords(e);
 
-  console.log(coord);
   if (!!coord) {
     const [x, y] = coord;
     draw();
