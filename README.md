@@ -1,9 +1,4 @@
-tile-map
+# Tiles Map - Vanilla
 
-This is a study project, main goal is to build a tiles map, where users can select a color and paint the disere block.
+This is a v1 of Tiles map, using any framework. If you are looking for a version who has Framework built in check [here](https://github.com/Joao-vi/tile-map-react). Also there you can get more info about the project.
 
-Techs
-
-This project use vanilla Js, and vanila CSS as well.
-
-The tiles map is build whitin HTML tag canvas.
